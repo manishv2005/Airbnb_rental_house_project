@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Favourites | Airbnb</title>
+    <link rel="stylesheet" href="/user-core.css">
+</head>
+
+<body>
+    <%- include('../partials/user-navbar', {activePage: 'favourite' }) %>
+
+        <main class="container">
+            <header>
+                <h1 class="page-title">Your Favourite Stays</h1>
+                <p class="page-subtitle">A collection of your dream homes and future getaways.</p>
+            </header>
+
+            <% if (favourite && favourite.length> 0) { %>
+                <div class="home-grid">
+                    <% favourite.forEach(home=> { %>
+                        <div class="home-card">
+                            <div class="home-image-wrapper">
+                                <img src="<%= '/' + home.image %>" alt="<%= home.name %>" class="home-image">
+                            </div>
+                            <div class="home-content">
+                                <h2 class="home-name">
+                                    <%= home.name %>
+                                </h2>
+                                <p class="home-location">Property Number: <%= home.number %>
+                                </p>
+                                <div class="home-price-tag">
+                                    $<%= home.price %><span class="price-unit"> /night</span>
+                                </div>
+                                <p class="line-clamp-2" style="font-size: 0.9rem; color: #666; margin-top: 8px;">
+                                    <%= home.description %>
+                                </p>
+
+                                <div class="home-actions">
+                                    <%- include('../partials/fav', {home: home , activepage: 'favourite' }) %>
+                                        <a href="/user/housedetail/<%= home.id %>" class="btn btn-primary">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                </div>
+                <% } else { %>
+                    <div
+                        style="text-align: center; padding: 80px 20px; background: white; border-radius: 16px; border: 1px dashed #ccc;">
+                        <h2 style="color: #666;">No favourites yet.</h2>
+                        <p style="margin-top: 10px; color: #999;">Tap the heart icon on any home to save it here.</p>
+                        <a href="/user/houselist" class="btn btn-primary" style="margin-top: 24px;">Browse Homes</a>
+                    </div>
+                    <% } %>
+        </main>
+</body>
+
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airbnb – Book Unique Homes</title>
+    <link rel="stylesheet" href="/home.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ─── NAVBAR ─────────────────────────────────────────────── -->
+    <%- include('./partials/landing-navbar.ejs', { activePage: 'home', navbarClass: '' }) %>
+
+    <!-- ─── HERO ───────────────────────────────────────────────── -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <span class="hero-badge">✦ Over 4 million homes worldwide</span>
+            <h1 class="hero-title">Find your perfect <span class="text-accent">getaway</span></h1>
+            <p class="hero-sub">Discover unique homes, cosy apartments, and dreamy villas — all in one place.</p>
+            <div class="hero-actions">
+                <a href="/auth/user/signup" class="btn btn-primary">Get started</a>
+                <a href="#listings" class="btn btn-ghost">Browse homes ↓</a>
+            </div>
+        </div>
+        <!-- Floating cards decoration -->
+        <div class="hero-cards">
+            <div class="float-card fc1">🏡 Beach House</div>
+            <div class="float-card fc2">⭐ 4.9 Rating</div>
+            <div class="float-card fc3">🌲 Mountain Cabin</div>
+        </div>
+    </section>
+
+    <!-- ─── STATS BAR ──────────────────────────────────────────── -->
+    <div class="stats-bar">
+        <div class="stat"><span class="stat-num">4M+</span><span class="stat-label">Listings</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">220</span><span class="stat-label">Countries</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">800M+</span><span class="stat-label">Guest arrivals</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">4.8★</span><span class="stat-label">Avg rating</span></div>
+    </div>
+
+    <!-- ─── LISTINGS ───────────────────────────────────────────── -->
+    <main class="listings-section" id="listings">
+        <div class="section-header">
+            <h2 class="section-title">All <span class="text-accent">Available</span> Homes</h2>
+            <p class="section-sub">Hand-picked stays waiting for you</p>
+        </div>
+
+        <div class="card-grid">
+            <% if (houselist && houselist.length> 0) { %>
+                <% houselist.forEach(house=> { %>
+                    <div class="house-card">
+                        <div class="card-img-wrap">
+                            <img src="<%= house.image || 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&auto=format&fit=crop' %>"
+                                alt="<%= house.name %>" class="card-img"
+                                onerror="this.src='https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&auto=format&fit=crop'">
+                            <span class="card-badge">Featured</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-top">
+                                <h3 class="card-title">
+                                    <%= house.name %>
+                                </h3>
+                                <span class="card-price">₹<%= Number(house.price).toLocaleString('en-IN') %>
+                                        <small>/night</small></span>
+                            </div>
+                            <p class="card-desc">
+                                <%= house.description ? house.description.substring(0, 80) + (house.description.length>
+                                    80 ? '…' : '') : 'A wonderful place to stay.' %>
+                            </p>
+                            <div class="card-meta">
+                                <span class="meta-item">👥 <%= house.number || '—' %> house number</span>
+                                <span class="card-rating">★ 4.8</span>
+                            </div>
+                            <a href="/auth/user/login" class="btn-book">Book now →</a>
+                        </div>
+                    </div>
+                    <% }) %>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <div class="empty-icon">🏡</div>
+                                <h3>No listings yet</h3>
+                            </div>
+                            <% } %>
+        </div>
+    </main>
+
+    <!-- ─── FOOTER ──────────────────────────────────────────────── -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <a href="/" class="nav-brand footer-brand">
+                <svg class="brand-icon" viewBox="0 0 32 32" fill="#FF385C">
+                    <path
+                        d="M16 1C9.37 1 4 9.04 4 17.07c0 5.54 4.33 9.93 8.18 12.2.93.55 1.96.83 2.99.83h1.66c1.03 0 2.06-.28 2.99-.83C23.67 27 28 22.61 28 17.07 28 9.04 22.63 1 16 1zm0 26.5c-.59 0-1.18-.16-1.71-.47C10.86 25.07 6 21.12 6 17.07 6 10.17 10.57 3 16 3s10 7.17 10 14.07c0 4.05-4.86 8-8.29 10.02-.53.3-1.12.41-1.71.41z" />
+                    <circle cx="16" cy="13" r="3.5" />
+                </svg>
+                <span class="brand-text">airbnb</span>
+            </a>
+            <p class="footer-copy">© 2025 Airbnb Clone. Built for learning purposes.</p>
+        </div>
+    </footer>
+
+    <script>
+
+        // ── Hamburger menu ──
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+            hamburger.classList.toggle('is-open');
+        });
+
+        // ── Navbar scroll effect ──
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 10) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // ── Card entrance animation ──
+        const cards = document.querySelectorAll('.house-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        cards.forEach(card => observer.observe(card));
+    </script>
+
+</body>
+
+</html>

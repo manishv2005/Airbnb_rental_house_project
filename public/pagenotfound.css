@@ -1,0 +1,29 @@
+/* 1. Full Screen Centering */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* Takes up the full height of the screen */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers vertically */
+    align-items: center; /* Centers horizontally */
+    background-color: #fdf2f2; /* A very light red background */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+}
+
+/* 2. The Error Heading */
+h1 {
+    font-size: 4rem; /* Very big text */
+    color: #e53e3e; /* Red color for error */
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* 3. Optional: A subheading style (if you add a <p> tag later) */
+p {
+    color: #718096;
+    font-size: 1.2rem;
+    margin-top: 10px;
+}

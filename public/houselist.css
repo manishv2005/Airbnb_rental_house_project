@@ -1,0 +1,218 @@
+/* Match houselist layout (same grid as userhome / hosthome) */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #222;
+    background: radial-gradient(circle at top left, #fff8f8 0, #f3f4f6 45%, #eef2ff 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px 40px;
+}
+
+/* Top navbar */
+.navbar {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 24px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+    display: flex;
+    justify-content: flex-start;
+}
+
+.navbar-list {
+    list-style: none;
+    display: flex;
+    gap: 28px;
+    margin: 0;
+    padding: 8px 4px 6px;
+}
+
+.navbar-item {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 2px;
+    font-size: 0.98rem;
+    font-weight: 500;
+    color: #4b5563;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.18s ease, transform 0.18s ease, text-shadow 0.18s ease;
+}
+
+.navbar-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #ff385c 0%, #f97316 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.18s ease;
+}
+
+.navbar-link.active::after {
+    transform: scaleX(1);
+}
+
+.navbar-link.active {
+    color: #111827;
+    font-weight: 600;
+}
+
+.navbar-link:hover:not(.active) {
+    color: #111827;
+    transform: translateY(-1px) scale(1.04);
+    text-shadow: 0 0 10px rgba(248, 113, 113, 0.6);
+}
+
+/* Header text */
+.title {
+    font-size: 2.1rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin: 0 0 6px;
+    color: #1f2933;
+}
+
+header p {
+    margin: 0 0 18px;
+    font-size: 1.02rem;
+    color: #6b7280;
+}
+
+/* Homes grid */
+.parant {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 32px;
+}
+
+.home-card {
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 8px 26px rgba(15, 23, 42, 0.14);
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+    transition: transform 0.16s cubic-bezier(.4,0,.2,1), box-shadow 0.18s ease;
+}
+
+.home-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+}
+
+.home-image {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.home-details {
+    padding: 18px 18px 20px;
+}
+
+.home-name {
+    margin: 0 0 6px;
+    font-size: 1.12rem;
+    font-weight: 650;
+    color: #183c58;
+}
+
+.home-info {
+    display: block;
+    font-size: 0.96rem;
+    color: #47536b;
+    margin-bottom: 3px;
+}
+
+.home-info strong {
+    font-weight: 600;
+}
+
+.home-details > div:last-of-type {
+    font-size: 0.96rem;
+    color: #627088;
+    line-height: 1.5;
+}
+
+/* Home card actions (Book / Favorite buttons) */
+.home-actions {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.btn {
+    border: none;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.08s ease;
+}
+
+.book-btn {
+    background: linear-gradient(90deg, #ff385c 60%, #f97316 100%);
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(248, 113, 113, 0.35);
+}
+
+.book-btn:hover {
+    box-shadow: 0 12px 28px rgba(248, 113, 113, 0.45);
+    transform: translateY(-1px);
+}
+
+.favorite-btn {
+    background-color: #fef9c3;
+    color: #92400e;
+    border: 1px solid #fbbf24;
+}
+
+.favorite-btn:hover {
+    background-color: #fef3c7;
+    color: #b45309;
+    transform: translateY(-1px);
+}
+
+/* Responsive tweaks */
+@media (max-width: 640px) {
+    body {
+        padding: 24px 16px 32px;
+    }
+
+    .parant {
+        gap: 22px;
+    }
+
+    .home-card {
+        width: 100%;
+        max-width: 360px;
+    }
+}

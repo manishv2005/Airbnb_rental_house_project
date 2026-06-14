@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up – Airbnb</title>
+    <link rel="stylesheet" href="/signup.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+
+    <!-- ─── NAVBAR ─────────────────────────────────────────────── -->
+    <%- include('../../partials/landing-navbar.ejs', { activePage: 'signup', navbarClass: 'scrolled' }) %>
+
+    <!-- ─── PAGE BODY ──────────────────────────────────────────── -->
+    <div class="page-wrap">
+
+        <!-- Left panel -->
+        <div class="left-panel">
+            <div class="panel-blob b1"></div>
+            <div class="panel-blob b2"></div>
+            <div class="panel-content">
+                <h2 class="panel-title">Join <span>airbnb</span> today</h2>
+                <p class="panel-sub">Create an account and start exploring or listing beautiful homes across the world.</p>
+                <div class="panel-features">
+                    <div class="feature">🏡 List or book instantly</div>
+                    <div class="feature">🌍 220+ countries covered</div>
+                    <div class="feature">🔒 Secure payments & booking</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right panel – form -->
+        <main class="form-panel">
+            <div class="form-card">
+                <div class="form-header">
+                    <p class="form-badge">Free Account</p>
+                    <h1 class="form-title">Create account</h1>
+                    <p class="form-sub">Already have one? <a href="/auth/user/login" class="inline-link">Sign in</a></p>
+                </div>
+
+                <%- include('../../partials/errors.ejs') %>
+
+                <form class="auth-form" action="/auth/user/signup" method="POST">
+
+                    <!-- Name row -->
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="firstname">First name</label>
+                            <div class="input-wrap">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                </svg>
+                                <input type="text" id="firstname" name="firstname" placeholder="John" value="<%= oldInput.firstname %>" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="lastname">Last name</label>
+                            <div class="input-wrap">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                </svg>
+                                <input type="text" id="lastname" name="lastname" placeholder="Doe" value="<%= oldInput.lastname %>" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="input-group">
+                        <label for="email">Email address</label>
+                        <div class="input-wrap">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            <input type="email" id="email" name="email" placeholder="you@example.com" value="<%= oldInput.email %>" required>
+                        </div>
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="input-group">
+                        <label>Gender</label>
+                        <div class="type-cards">
+                            <label class="type-card" for="male">
+                                <input type="radio" id="male" name="gender" value="male" class="type-radio" <%= oldInput.gender === 'male' ? 'checked' : '' %> >
+                                <div class="type-card-inner">
+                                    <span class="type-emoji">👨</span>
+                                    <div>
+                                        <strong>Male</strong>
+                                        <span>Identify as male</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="type-card" for="female">
+                                <input type="radio" id="female" name="gender" value="female" class="type-radio" <%= oldInput.gender === 'female' ? 'checked' : '' %> >
+                                <div class="type-card-inner">
+                                    <span class="type-emoji">👩</span>
+                                    <div>
+                                        <strong>Female</strong>
+                                        <span>Identify as female</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Password row -->
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <div class="input-wrap">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+                                </svg>
+                                <input type="password" id="password" name="password" placeholder="Min. 8 characters" required>
+                                <button type="button" class="eye-btn" data-target="password" aria-label="Show password">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <!-- Password strength pills -->
+                            <div class="strength-pills">
+                                <span class="pill" id="req-length">8+ chars</span>
+                                <span class="pill" id="req-upper">A-Z</span>
+                                <span class="pill" id="req-lower">a-z</span>
+                                <span class="pill" id="req-number">0-9</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="confirmPassword">Confirm password</label>
+                            <div class="input-wrap">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+                                </svg>
+                                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repeat password" required>
+                                <button type="button" class="eye-btn" data-target="confirmPassword" aria-label="Show password">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <span class="match-msg" id="matchMsg"></span>
+                        </div>
+                    </div>
+
+                    <!-- Terms -->
+                    <div class="input-group terms-group">
+                        <label class="remember-label">
+                            <input type="checkbox" id="terms" name="terms"  class="checkbox-native" >
+                            <span class="checkbox-custom"></span>
+                            <span>I agree to the <a href="/terms" class="inline-link">Terms of Service</a> and <a href="/privacy" class="inline-link">Privacy Policy</a></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span class="btn-text">Create account</span>
+                        <span class="btn-spinner" style="display:none">
+                            <span class="spinner"></span>
+                        </span>
+                        <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </form>
+
+                <a href="/" class="back-link">← Back to home</a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Password toggle
+        document.querySelectorAll('.eye-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const input = document.getElementById(this.dataset.target);
+                const isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                this.style.color = isHidden ? 'var(--red)' : '';
+                const path = this.querySelector('path');
+                if (!isHidden) {
+                    path.setAttribute('d', 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z');
+                } else {
+                    path.setAttribute('d', 'M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19M1 1l22 22');
+                }
+            });
+        });
+
+        // Password strength pills
+        const pwdInput = document.getElementById('password');
+        const pills = {
+            'req-length':  /.{8,}/,
+            'req-upper':   /[A-Z]/,
+            'req-lower':   /[a-z]/,
+            'req-number':  /[0-9]/
+        };
+        pwdInput.addEventListener('input', () => {
+            const v = pwdInput.value;
+            Object.entries(pills).forEach(([id, regex]) => {
+                document.getElementById(id).classList.toggle('valid', regex.test(v));
+            });
+        });
+
+        // Password match
+        const conf = document.getElementById('confirmPassword');
+        const matchMsg = document.getElementById('matchMsg');
+        conf.addEventListener('input', () => {
+            if (!conf.value) { matchMsg.textContent = ''; return; }
+            if (conf.value === pwdInput.value) {
+                matchMsg.textContent = '✓ Passwords match';
+                matchMsg.className = 'match-msg ok';
+            } else {
+                matchMsg.textContent = '✗ Passwords do not match';
+                matchMsg.className = 'match-msg err';
+            }
+        });
+
+        // Gender visual selection
+        document.querySelectorAll('.type-radio').forEach(radio => {
+            radio.addEventListener('change', () => {
+                document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+                radio.closest('.type-card').classList.add('selected');
+            });
+            // restore on page load (if oldInput)
+            if (radio.checked) radio.closest('.type-card').classList.add('selected');
+        });
+
+        // Submit: Simplified password match check
+        document.querySelector('.auth-form').addEventListener('submit', function (e) {
+            const pwd = document.getElementById('password');
+            const cnf = document.getElementById('confirmPassword');
+            if (pwd.value !== cnf.value) {
+                e.preventDefault();
+                matchMsg.textContent = '✗ Passwords do not match';
+                matchMsg.className = 'match-msg err';
+                return;
+            }
+            // NopreventDefault here – allows the form to submit naturally to /auth/signup
+        });
+    </script>
+
+</body>
+
+</html>

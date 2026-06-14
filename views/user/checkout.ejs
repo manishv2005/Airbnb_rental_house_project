@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm and Pay | <%= home.name %></title>
+    <link rel="stylesheet" href="/user-core.css">
+</head>
+<body>
+    <%- include('../partials/user-navbar', {activePage: 'none'}) %>
+
+    <main class="checkout-container">
+        <%
+          const checkinDate = new Date(bookingDetail.checkin_date).toLocaleDateString();
+          const checkoutDate = new Date(bookingDetail.checkout_date).toLocaleDateString();
+          const totalNights = Math.round((new Date(bookingDetail.checkout_date) - new Date(bookingDetail.checkin_date)) / (1000 * 60 * 60 * 24));
+          const totalPrice = bookingDetail.total_price;
+        %>
+        <!-- Left Column: Review & Form -->
+        <div>
+            <div class="checkout-header">
+                <a href="javascript:history.back()" class="back-btn">←</a>
+                Request to book
+            </div>
+
+            <section>
+                <h2 class="section-title">Your trip</h2>
+                
+                <div class="trip-details">
+                    <div class="trip-item">
+                        <div>
+                            <div class="trip-label">Dates</div>
+                            <div class="trip-value"><%= checkinDate %> – <%= checkoutDate %></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ground rules or cancellation policy can go here -->
+                <div style="margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border-color);">
+                    <h2 class="section-title" style="font-size: 1.2rem;">Ground rules</h2>
+                    <p style="color: var(--text-secondary); line-height: 1.5;">We ask every guest to remember a few simple things about what makes a great guest.</p>
+                    <ul style="color: var(--text-secondary); margin-top: 12px; margin-left: 20px; line-height: 1.8;">
+                        <li>Follow the house rules</li>
+                        <li>Treat your Host's home like your own</li>
+                    </ul>
+                </div>
+
+                <!-- Final Confirm Form -->
+                <!-- The action should point to the route that actually INSERTs the booking in DB -->
+                <div style="display: flex; gap: 16px;">
+                    <form action='<%="/user/confirm-booking/"+bookingDetail.booking_id%>' method="POST">
+                        <button type="submit" class="btn btn-primary" style="padding: 16px 32px; font-size: 1.1rem; border-radius: 8px;">Confirm Booking</button>
+                    </form>
+                    <form action='<%="/user/cancel-booking/"+bookingDetail.booking_id%>' method="POST">
+                        <button type="submit" class="btn btn-secondary" style="padding: 16px 32px; font-size: 1.1rem; border-radius: 8px;">Cancel</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+        <!-- Right Column: Summary Card -->
+        <div>
+            <div class="summary-card">
+                <div class="home-preview">
+                    <img src="<%= '/' + home.image %>" alt="Home preview" class="home-thumb">
+                    <div class="home-info">
+                        <h3><%= home.name %></h3>
+                        <p>Property ID: <%= home.number %></p>
+                    </div>
+                </div>
+
+                <div style="font-size: 1.3rem; font-weight: 600; margin-bottom: 24px;">Price details</div>
+
+                <div class="price-details">
+                    <div class="price-row">
+                        <% const lockedNightlyRate = (totalPrice / totalNights).toFixed(2); %>
+                        <span>$<%= lockedNightlyRate %> x <%= totalNights %> nights</span>
+                        <span>$<%= totalPrice %></span>
+                    </div>
+                    <!-- You can add cleaning fee or taxes here if needed -->
+                    <div class="price-row">
+                        <span style="text-decoration: underline;">Taxes</span>
+                        <span>$0</span>
+                    </div>
+                </div>
+
+                <div class="total-row">
+                    <span>Total (USD)</span>
+                    <span>$<%= totalPrice %></span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

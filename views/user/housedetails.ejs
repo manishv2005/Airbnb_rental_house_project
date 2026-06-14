@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= home.name %> | Details
+    </title>
+    <link rel="stylesheet" href="/user-core.css">
+</head>
+
+<body>
+    <%- include('../partials/user-navbar', {activePage: 'houselist' }) %>
+
+        <main class="container">
+            <%- include('../partials/errors') %>
+            <div class="detail-container">
+                <img src="<%= '/' + home.image %>" alt="<%= home.name %>" class="detail-img">
+
+                <div class="detail-content">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h1 class="page-title">
+                                <%= home.name %>
+                            </h1>
+                            <p class="home-location">Property ID: <%= home.number %>
+                            </p>
+                        </div>
+                        <%- include('../partials/fav') %>
+                    </div>
+
+                    <div style="margin-top: 32px; display: grid; grid-template-columns: 2fr 1fr; gap: 40px;">
+                        <div>
+                            <h2 style="font-size: 1.4rem; margin-bottom: 16px;">About this home</h2>
+                            <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.1rem;">
+                                <%= home.description %>
+                            </p>
+
+                            <div
+                                style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--border-color);">
+                                <h3 style="margin-bottom: 16px;">What this place offers</h3>
+                                <ul
+                                    style="list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; color: var(--text-secondary);">
+                                    <li>✓ Entire home</li>
+                                    <li>✓ Self check-in</li>
+                                    <li>✓ Superhost</li>
+                                    <li>✓ Free cancellation</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div
+                            style="border: 1px solid var(--border-color); padding: 24px; border-radius: 12px; box-shadow: var(--shadow); height: fit-content; position: sticky; top: 100px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px;">
+                                $<%= home.price %> <span
+                                        style="font-size: 1rem; font-weight: 400; color: var(--text-secondary);">/
+                                        night</span>
+                            </div>
+
+                            <form action="/user/reserve" method="POST">
+                                <input type="hidden" name="homeId" value="<%= home.id %>">
+                                <div style="display: flex; flex-direction: column; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; margin-bottom: 16px;">
+                                    <div style="display: flex;">
+                                        <div style="flex: 1; padding: 10px; border-right: 1px solid var(--border-color);">
+                                            <label for="checkinDate" style="display: block; font-size: 0.70rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-primary);">Check-in</label>
+                                            <input type="date" id="checkinDate" name="checkinDate" required style="width: 100%; border: none; outline: none; font-family: inherit; font-size: 0.95rem; color: var(--text-primary); cursor: pointer; background: transparent;">
+                                        </div>
+                                        <div style="flex: 1; padding: 10px;">
+                                            <label for="checkoutDate" style="display: block; font-size: 0.70rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-primary);">Checkout</label>
+                                            <input type="date" id="checkoutDate" name="checkoutDate" required style="width: 100%; border: none; outline: none; font-family: inherit; font-size: 0.95rem; color: var(--text-primary); cursor: pointer; background: transparent;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary"
+                                    style="width: 100%; padding: 16px; font-size: 1.1rem; border-radius: 8px;">Reserve Now</button>
+                            </form>
+
+                            <p
+                                style="text-align: center; font-size: 0.85rem; color: var(--text-secondary); margin-top: 16px;">
+                                You won't be charged yet
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin: 40px 0;">
+                <a href="javascript:history.back()" class="btn btn-secondary">← Back to search</a>
+            </div>
+        </main>
+</body>
+
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – Airbnb</title>
+    <link rel="stylesheet" href="/login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ─── NAVBAR ─────────────────────────────────────────────── -->
+    <%- include('../../partials/landing-navbar.ejs', { activePage: 'login', navbarClass: 'scrolled' }) %>
+
+    <!-- ─── PAGE BODY ──────────────────────────────────────────── -->
+    <div class="page-wrap">
+
+        <!-- Left panel -->
+        <div class="left-panel">
+            <div class="panel-blob b1"></div>
+            <div class="panel-blob b2"></div>
+            <div class="panel-content">
+                <h2 class="panel-title">Welcome back to <span>airbnb</span></h2>
+                <p class="panel-sub">Sign in and continue exploring thousands of beautiful stays around the world.</p>
+                <div class="panel-features">
+                    <div class="feature">🏡 4 million+ listings worldwide</div>
+                    <div class="feature">⭐ Verified host reviews</div>
+                    <div class="feature">🔒 Secure & private booking</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right panel – form -->
+        <main class="form-panel">
+            <div class="form-card">
+                <div class="form-header">
+                    <p class="form-badge">Host &amp; Guest Portal</p>
+                    <h1 class="form-title">Sign in</h1>
+                    <p class="form-sub">Don't have an account? <a href="/auth/user/signup" class="inline-link">Sign up free</a></p>
+                </div>
+
+                <%- include('../../partials/errors.ejs') %>
+
+                <form action="/auth/user/login" method="POST" class="auth-form">
+
+                    <div class="input-group">
+                        <label for="email">Email address</label>
+                        <div class="input-wrap">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            <input type="email" id="email" name="email" placeholder="you@example.com"  value="<%= oldInput.email %>" required autocomplete="email">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrap">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+                            </svg>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" minlength="6"  required autocomplete="current-password">
+                            <button type="button" class="eye-btn" id="togglePassword" aria-label="Show password">
+                                <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <button type="submit" class="submit-btn">
+                        <span>Sign in</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </form>
+
+                <a href="/" class="back-link">← Back to home</a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('eye-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+                this.style.color = 'var(--red)';
+            } else {
+                input.type = 'password';
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+                this.style.color = '';
+            }
+        });
+
+        // Account type visual selection
+        document.querySelectorAll('.type-radio').forEach(radio => {
+            radio.addEventListener('change', () => {
+                document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+                radio.closest('.type-card').classList.add('selected');
+            });
+            // restore on page load (if oldInput)
+            if (radio.checked) radio.closest('.type-card').classList.add('selected');
+        });
+    </script>
+
+</body>
+
+</html>

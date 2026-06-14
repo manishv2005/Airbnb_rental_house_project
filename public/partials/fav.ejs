@@ -1,0 +1,7 @@
+  
+  <form action="/user/favourite" method="POST">
+                    <input type="hidden" name="homeId" value="<%= home.id %>">
+                    <button type="submit" class="btn favourite-btn">
+                        <%=(home.fav) ? "Remove from favourite" : "Add to favourite"%>
+                    </button>
+                </form>

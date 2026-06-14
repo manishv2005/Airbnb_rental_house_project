@@ -1,0 +1,36 @@
+<!-- ─── SHARED LANDING NAVBAR ──────────────────────────────────
+     activePage: 'home' | 'signup' | 'login'
+     navbarClass (optional): 'scrolled'
+─────────────────────────────────────────────────────────────── -->
+<nav class="navbar <%= typeof navbarClass !== 'undefined' ? navbarClass : '' %>">
+    <div class="nav-inner">
+
+        <!-- Brand -->
+        <a href="/" class="nav-brand">
+            <svg class="brand-icon" viewBox="0 0 32 32" fill="#FF385C">
+                <path d="M16 1C9.37 1 4 9.04 4 17.07c0 5.54 4.33 9.93 8.18 12.2.93.55 1.96.83 2.99.83h1.66c1.03 0 2.06-.28 2.99-.83C23.67 27 28 22.61 28 17.07 28 9.04 22.63 1 16 1zm0 26.5c-.59 0-1.18-.16-1.71-.47C10.86 25.07 6 21.12 6 17.07 6 10.17 10.57 3 16 3s10 7.17 10 14.07c0 4.05-4.86 8-8.29 10.02-.53.3-1.12.41-1.71.41z" />
+                <circle cx="16" cy="13" r="3.5" />
+            </svg>
+            <span class="brand-text">airbnb</span>
+        </a>
+
+        <!-- Nav Links -->
+        <ul class="nav-links" id="navLinks">
+            <li>
+                <a href="/" class="nav-link <%= activePage === 'home' ? 'active' : '' %>">Home</a>
+            </li>
+            <li>
+                <a href="/auth/user/signup" class="nav-link <%= activePage === 'signup' ? 'active' : '' %>">Sign Up</a>
+            </li>
+            <li>
+                <a href="/auth/user/login" class="nav-link <%= activePage === 'login' ? 'active' : '' %>">Login </a>
+            </li>
+        </ul>
+
+        <!-- Mobile hamburger -->
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+
+    </div>
+</nav>

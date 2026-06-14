@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details | <%= home.name %></title>
+    <link rel="stylesheet" href="/user-core.css">
+</head>
+
+<body>
+    <%- include('../partials/user-navbar', {activePage: 'bookings' }) %>
+
+        <main class="container">
+            <div class="checkout-container">
+                <!-- Left Column: Booking details -->
+                <div>
+                    <div class="checkout-header">
+                        <a href="/user/bookings" class="back-btn">←</a>
+                        <h1>Booking Details</h1>
+                    </div>
+
+                    <div class="trip-details">
+                        <h2 class="section-title">Your Trip</h2>
+                        
+                        <div class="trip-item">
+                            <div>
+                                <div class="trip-label">Booking ID</div>
+                                <div class="trip-value"><%= booking.booking_id %></div>
+                            </div>
+                        </div>
+
+                        <div class="trip-item">
+                            <div>
+                                <div class="trip-label">Status</div>
+                                <div class="trip-value" style="color: #059669; font-weight: 600; text-transform: uppercase; font-size: 0.9rem;">
+                                    <%= booking.status %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="trip-item">
+                            <div>
+                                <div class="trip-label">Dates</div>
+                                <% 
+                                    const checkin = new Date(booking.checkin_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                                    const checkout = new Date(booking.checkout_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                                %>
+                                <div class="trip-value"><%= checkin %> - <%= checkout %></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <% if (booking.status === 'confirmed') { %>
+                        <div style="margin-top: 40px; padding: 24px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px;">
+                            <h3 style="color: #059669; margin-bottom: 8px;">You're all set!</h3>
+                            <p style="color: #047857; font-size: 0.95rem;">Your booking is confirmed. The host is expecting you on <%= checkin %>.</p>
+                        </div>
+                    <% } else if (booking.status === 'pending') { %>
+                        <div style="margin-top: 40px; padding: 24px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px;">
+                            <h3 style="color: #d97706; margin-bottom: 8px;">Action Required</h3>
+                            <p style="color: #b45309; font-size: 0.95rem;">Your booking is pending. Please complete your payment to confirm your reservation.</p>
+                        </div>
+                    <% } else { %>
+                        <div style="margin-top: 40px; padding: 24px; background: rgba(225, 29, 72, 0.1); border: 1px solid rgba(225, 29, 72, 0.3); border-radius: 12px;">
+                            <h3 style="color: #e11d48; margin-bottom: 8px;">Booking Cancelled</h3>
+                            <p style="color: #be123c; font-size: 0.95rem;">This booking was cancelled and is no longer active.</p>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Right Column: Home summary and Price -->
+                <div>
+                    <div class="summary-card">
+                        <div class="home-preview">
+                            <img src="<%= '/' + home.image %>" alt="<%= home.name %>" class="home-thumb">
+                            <div class="home-info">
+                                <h3><%= home.name %></h3>
+                                <p>Property ID: <%= home.number %></p>
+                            </div>
+                        </div>
+
+                        <div class="price-details">
+                            <h2 class="section-title" style="margin-bottom: 16px;">Price details</h2>
+                            
+                            <div class="price-row">
+                                <% 
+                                    const d1 = new Date(booking.checkin_date);
+                                    const d2 = new Date(booking.checkout_date);
+                                    const nights = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+                                    const lockedNightlyRate = (booking.total_price / nights).toFixed(2);
+                                %>
+                                <span>$<%= lockedNightlyRate %> x <%= nights %> nights</span>
+                                <span>$<%= booking.total_price %></span>
+                            </div>
+                        </div>
+
+                        <div class="total-row">
+                            <span>Total (USD)</span>
+                            <span>$<%= booking.total_price %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+</body>
+
+</html>
