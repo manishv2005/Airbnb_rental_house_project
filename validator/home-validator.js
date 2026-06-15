@@ -1,4 +1,6 @@
-const { body, validationResult } = require("express-validator");
+const fs = require('fs');
+const path = require('path');
+const { body, validationResult ,param} = require("express-validator");
 exports.validateHomeData = [
     body('name')
         .notEmpty()
@@ -17,8 +19,8 @@ exports.validateHomeData = [
     body('price')
         .notEmpty()
         .withMessage('Price is required').bail()
-        .isDecimal()
-        .withMessage('Price must be a valid number'),
+        .isFloat({gt :0 })
+        .withMessage('Price must be a valid price '),
 
     body('description')
         .isLength({ max: 200 })
@@ -34,6 +36,16 @@ exports.validateHomeData = [
 
         if (!errors.isEmpty()) {
             console.log("validation error");
+             if (req.file) {
+                        const filePath = path.join(__dirname,'../', req.file.path);
+                        fs.unlink(filePath, (err) => {
+                            if (err) {
+                                console.error('Error deleting file:', err);
+                                return;
+                            }
+                            console.log('File deleted successfully:', filePath);
+                        });
+                    }
             const isEditing = Boolean(id);
             return res.status(422).render("./host/edithosthome", {
                 errors: errors.array().map(err => err.msg),
@@ -48,7 +60,6 @@ exports.validateHomeData = [
     }
 ];
 
-const { param } = require("express-validator");
 exports.validateHomeIdParam = [
     param('homeId', 'Invalid request').notEmpty().isNumeric(),
     (req, res, next) => {

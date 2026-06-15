@@ -59,6 +59,7 @@
                             </div>
 
                             <form action="/user/reserve" method="POST">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <input type="hidden" name="homeId" value="<%= home.id %>">
                                 <div style="display: flex; flex-direction: column; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; margin-bottom: 16px;">
                                     <div style="display: flex;">

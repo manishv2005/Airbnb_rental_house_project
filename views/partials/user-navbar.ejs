@@ -29,6 +29,7 @@
            <span style="font-weight: 500; font-size: 0.95rem; color: #444;">Hi, <%= user ? user.FirstName : 'Guest' %></span>
            <a href="/auth/Host" style="text-decoration: none; color: #222; font-weight: 600; font-size: 0.9rem; padding: 8px 16px; border-radius: 24px; transition: background 0.2s;" onmouseover="this.style.background='#f1f1f1'" onmouseout="this.style.background='transparent'">Switch to Host</a>
            <form action="/auth/user/logout" method="post" style="display: inline;">
+               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                <button type="submit" class="btn btn-secondary" style="border-radius: 24px; padding: 6px 16px; font-size: 0.9rem; cursor: pointer;">Log Out</button>
            </form>
         </div>

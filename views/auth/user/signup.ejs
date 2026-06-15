@@ -47,7 +47,8 @@
                 <%- include('../../partials/errors.ejs') %>
 
                 <form class="auth-form" action="/auth/user/signup" method="POST">
-
+                     <!-- csrf token -->
+                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <!-- Name row -->
                     <div class="input-row">
                         <div class="input-group">

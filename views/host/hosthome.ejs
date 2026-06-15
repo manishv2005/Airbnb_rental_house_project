@@ -42,7 +42,9 @@
 
                                 <div class="home-actions">
                                     <a href="/host/edit-home/<%= home.id %>?editing=true" class="btn btn-secondary" style="flex:1; text-align: center;">Edit Details</a>
+
                                     <form action="/host/delete-home/<%= home.id %>" method="POST" style="flex:1;">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <button type="submit" class="btn btn-primary" style="width: 100%; background: linear-gradient(90deg, #E11D48 0%, #BE123C 100%);"
                                             onclick="return confirm('Archive this property?');">Delete</button>
                                     </form>

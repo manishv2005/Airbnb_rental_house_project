@@ -105,7 +105,7 @@ exports.Booking = class Booking {
     }
 
 
-    booked (booking_id , user_id ) {
+    static booked (booking_id , user_id ) {
         return db.execute("UPDATE BOOKINGS SET status = 'confirmed' WHERE booking_id = ? AND user_id = ? and created_at >= NOW() - INTERVAL 3 MINUTE", [booking_id, user_id]);
     }
 

@@ -49,9 +49,11 @@
                 <!-- The action should point to the route that actually INSERTs the booking in DB -->
                 <div style="display: flex; gap: 16px;">
                     <form action='<%="/user/confirm-booking/"+bookingDetail.booking_id%>' method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <button type="submit" class="btn btn-primary" style="padding: 16px 32px; font-size: 1.1rem; border-radius: 8px;">Confirm Booking</button>
                     </form>
                     <form action='<%="/user/cancel-booking/"+bookingDetail.booking_id%>' method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <button type="submit" class="btn btn-secondary" style="padding: 16px 32px; font-size: 1.1rem; border-radius: 8px;">Cancel</button>
                     </form>
                 </div>

@@ -3,13 +3,14 @@ const dotenv = require('dotenv');
 dotenv.config();
 // core module
 const path = require('path');
+const fs = require('fs');
 
 
 // external module
 const express = require('express'); // this is used to make an application function
-const multer = require('multer'); // this is used to  to handle the mutiform data 
+// this is used to  to handle the mutiform data 
 const session = require("express-session");
-
+const { generateToken, csrfSynchronisedProtection } = require('./utils/csrfSync-Configuration');
 
 
 //export local module 
@@ -18,11 +19,10 @@ const userRouter = require('./routes/user');
 const UserauthRouter = require('./routes/user-auth');
 const HostauthRouter = require('./routes/host-auth');
 const { Home } = require('./models/model');
-const {Booking} = require('./models/booking');
+const { Booking } = require('./models/booking');
 const errorController = require('./controller/error-controller');
 
 const { session_options } = require('./utils/session-config');
-const { multerConfig } = require('./utils/multer-config');
 
 
 // here app is a function and it is a calllback 
@@ -31,7 +31,7 @@ const app = express();
 
 
 
-   
+
 
 // seting ejs templete
 app.set('view engine', 'ejs');
@@ -40,6 +40,19 @@ app.disable('x-powered-by'); // this hide that which server is running this appl
 
 app.use(session(session_options));
 
+
+app.use((req, res, next) => {
+
+    // LAZY-LOAD the CSRF token. It only generates a token (and saves a session) 
+    // IF an EJS file actually asks for `<%= csrfToken %>`.
+    Object.defineProperty(res.locals, 'csrfToken', {
+        get: () => generateToken(req),
+        enumerable: true // REQUIRED: Express needs this to be true to pass it to EJS
+    });
+
+    next();
+});
+
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
@@ -47,17 +60,6 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-app.use(multer(multerConfig).single('image'), (err, req, res, next) => {
-    if (err) {
-        console.error('Multer error:', err);
-        return res.status(400).send('Error uploading file: ' + err.message);
-    }
-    next();
-});
-
-
-
 
 
 
@@ -76,7 +78,7 @@ app.get('/', (req, res, next) => {
     console.log("this is landing page of airbnb");
     Home.fetchAll()
         .then(([houselist]) => {
-            res.render('landingpage', { houselist});
+            res.render('landingpage', { houselist });
         })
         .catch(err => {
             console.error('Error fetching homes for landing page:', err);
@@ -98,6 +100,24 @@ app.get('/500', errorController.getpage500);
 //middleware that handle unvalid page
 app.use((req, res, next) => {
     res.render('pagenotfound');
+});
+
+app.use((err, req, res, next) => {
+    console.log(err)
+    if (err.code === 'EBADCSRFTOKEN') {
+
+        if (req.file) {
+            const filePath = path.join(__dirname, req.file.path);
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error('Error deleting file:', err);
+                    return;
+                }
+                console.log('File deleted successfully:', filePath);
+            });
+        }
+    };
+    next(err) ;
 });
 
 

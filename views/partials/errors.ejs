@@ -1,6 +1,6 @@
 
                
-    <% if (errors && errors.length > 0) { %>
+    <% if (locals.errors && locals.errors.length > 0) { %>
     <div class="error-alert-container">
         <div class="error-alert-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -9,7 +9,7 @@
         </div>
         <div class="error-alert-content">
             <ul class="error-alert-list">
-                <% errors.forEach(error => { %>
+                <% locals.errors.forEach(error => { %>
                     <li><%= error %></li>
                 <% }) %>
             </ul>

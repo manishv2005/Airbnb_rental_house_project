@@ -42,7 +42,7 @@ exports.postAddHome = (req, res) => {
 
 
     const image = req.file.path;
-    const hostId = req.session.host.hostId;
+    const hostId = req.session.host.HostId;
 
     const newHome = new Home(name, number, price, description, image, hostId);
     console.log(" this is the new Home", newHome);
@@ -51,6 +51,18 @@ exports.postAddHome = (req, res) => {
         .then(() => res.redirect('/host'))
         .catch(err => {
             console.error('Error saving home:', err);
+
+            if (req.file) {
+            const filePath = path.join(__dirname,'../', req.file.path);
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error('Error deleting file:', err);
+                    return;
+                }
+                console.log('File deleted successfully:', filePath);
+            });
+        }
+        
             res.status(500).render("./host/edithosthome", {
                 home: newHome,
                 editing: false,
@@ -99,7 +111,7 @@ exports.getEditHome = (req, res, next) => {
             return;
         }
         // Ownership check — only the host who owns this listing can edit it
-        if (Number(home.hostId) !== Number(req.session.host.hostId)) {
+        if (Number(home.hostId) !== Number(req.session.host.HostId)) {
             console.log("Unauthorized edit attempt — home does not belong to this host");
             return res.redirect(`/host?error=${encodeURIComponent("You don't have permission to edit this home")}`);
         }
@@ -120,7 +132,7 @@ exports.getEditHome = (req, res, next) => {
 }
 
 
-exports.postEditHome = async (req, res) => {
+exports.postEditHome = async (req, res) =>  {
     console.log(req.body);
     const { id, name, number, price, description } = req.body;
     let image = null;
@@ -143,8 +155,19 @@ exports.postEditHome = async (req, res) => {
         
         const newHome = new Home(name, number, price, description, image, req.session.user.UserId, id);
         const [temp]= await newHome.save();
-        if (temp.affectedRows === 0) {
+
+        if (temp.affectedRows === 0) {         
             console.log("home not updated");
+            if (req.file) {
+                const filePath = path.join(__dirname,'../', req.file.path);
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        console.error('Error deleting file:', err);
+                        return;
+                    }
+                    console.log('File deleted successfully:', filePath);
+                });
+            }
             res.redirect(`/host/edit-home/${id}?editing=true&error=${encodeURIComponent("Error in updating home")}`);
             return;
         }
@@ -153,9 +176,20 @@ exports.postEditHome = async (req, res) => {
         res.redirect('/host');
     } catch (err) {
         console.error('Error updating home:', err);
+        if (req.file) {
+            const filePath = path.join(__dirname,'../', req.file.path);
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error('Error deleting file:', err);
+                    return;
+                }
+                console.log('File deleted successfully:', filePath);
+            });
+        }
         res.redirect('/host');
     }
 }
+
 
 
 

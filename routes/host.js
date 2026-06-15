@@ -3,9 +3,12 @@ const express = require('express');
 const hostRouter = express.Router();
 const { validateHomeData, validateHomeIdParam } = require('../validator/home-validator');
 const { validatequery } = require('../validator/request-dataValidator');
+const {csrfSynchronisedProtection} = require('../utils/csrfSync-Configuration') ;
+const multer = require('multer'); 
+const { multerConfig } = require('../utils/multer-config');
+
 
 // import local module to get path of rootdir
-const rootdir = require('../utils/util');
 
 const hostcontroller = require('../controller/host-controller');
 
@@ -23,21 +26,36 @@ hostRouter.use((req, res, next) => {
     }
 });
 
+
+
+
 //middleware to handle get add-home path give a form to register a home
 hostRouter.get('/add-home', hostcontroller.getAddHome);
 
-// handlin post add-home page and give suceess message
-hostRouter.post('/add-home',validateHomeData, hostcontroller.postAddHome);
-
-
-// handling /host request (Host Dashboard showing their own homes)
 hostRouter.get('/',validatequery, hostcontroller.getHostDashboard);
 
 hostRouter.get("/edit-home/:homeId", validateHomeIdParam, hostcontroller.getEditHome);
 
-hostRouter.post("/edit-home", validateHomeData, hostcontroller.postEditHome);
+hostRouter.post("/delete-home/:homeId", csrfSynchronisedProtection,validateHomeIdParam, hostcontroller.postDeleteHome);
 
-hostRouter.post("/delete-home/:homeId", validateHomeIdParam, hostcontroller.postDeleteHome);
+
+hostRouter.use(multer(multerConfig).single('image'), (err, req, res, next) => {
+    if (err) {
+        console.error('Multer error:', err);
+        return res.status(400).send('Error uploading file: ' + err.message);
+    }
+    next();
+});
+
+// handlin post add-home page and give suceess message
+hostRouter.post('/add-home',csrfSynchronisedProtection, validateHomeData, hostcontroller.postAddHome);
+
+
+// handling /host request (Host Dashboard showing their own homes)
+
+
+hostRouter.post("/edit-home",csrfSynchronisedProtection,validateHomeData, hostcontroller.postEditHome);
+
 
 
 hostRouter.use(getpage404);

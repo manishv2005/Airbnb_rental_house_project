@@ -11,7 +11,7 @@
 <body>
     <%- include('../partials/navbar') %>
 
-    <div class="add-homehost-container">
+    <!-- <div class="add-homehost-container">
         <h1 class="add-homehost-title">
             <%= (editing==true||locals.errors) ? "Edit Property Details" : "Publish a New Property" %>
         </h1>
@@ -22,13 +22,16 @@
                     <p><%= error %></p>
                 <% }); %>
             </div>
-        <% } %>
+        <% } %> -->
+
+        <%- include('../partials/errors') %>
 
 
 
      
         
         <form action="/host/<%=(editing==true)?'edit-home':'add-home'%>" method="POST" class="add-homehost-form" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <input type="hidden" name="id" value="<%= (editing==true) ? home.id : '' %>">
             
             <div class="add-homehost-field">

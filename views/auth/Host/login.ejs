@@ -47,6 +47,9 @@
 
                 <form action="/auth/Host/login" method="POST" class="auth-form">
 
+                    <!-- csrf token -->
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
                     <div class="input-group">
                         <label for="password">Password</label>
                         <div class="input-wrap">

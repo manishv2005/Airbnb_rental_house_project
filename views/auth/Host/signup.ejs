@@ -47,6 +47,10 @@
 
                 <form class="auth-form" action="/auth/Host/signup" method="POST">
 
+
+                    <!-- csrf token -->
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    
                     <!-- Tax ID and Phone Number row -->
                     <div class="input-row">
                         <div class="input-group">

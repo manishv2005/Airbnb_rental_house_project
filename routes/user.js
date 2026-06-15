@@ -6,6 +6,7 @@ const userController = require('../controller/user-controller');
 const { getpage404 } = require('../controller/error-controller');
 const {validateReservation, validateBookingId, validateHomeId, validateHouseDetailQuery} = require('../validator/booking-validator') ;
 const {validatequery} = require('../validator/request-dataValidator') ;
+const {csrfSynchronisedProtection} = require('../utils/csrfSync-Configuration') ;
 
 userRouter.use((req, res, next) => {
     if (req.session.user) {
@@ -24,11 +25,11 @@ userRouter.get('/favourite', userController.getFavourites);
 userRouter.get('/bookings', userController.getBookings);
 userRouter.get('/booking-details/:booking_id', validateBookingId, userController.getBookingDetails);
 userRouter.get('/housedetail/:homeId',validateHouseDetailQuery, userController.getHouseDetail); // GET — detail pages must be bookmarkable
-userRouter.post('/add-favourite',validateHomeId, userController.postAddFavourite);
-userRouter.post('/reserve', validateReservation, userController.postReserveHouse);
+userRouter.post('/add-favourite',csrfSynchronisedProtection,validateHomeId, userController.postAddFavourite);
+userRouter.post('/reserve',csrfSynchronisedProtection, validateReservation, userController.postReserveHouse);
 userRouter.get('/checkout/:booking_id',validateBookingId, userController.getCheckoutPage);
-userRouter.post('/confirm-booking/:booking_id',validateBookingId, userController.postConfirmBooking);
-userRouter.post('/cancel-booking/:booking_id',validateBookingId, userController.postCancelBooking);
+userRouter.post('/confirm-booking/:booking_id',csrfSynchronisedProtection,validateBookingId, userController.postConfirmBooking);
+userRouter.post('/cancel-booking/:booking_id',csrfSynchronisedProtection,validateBookingId, userController.postCancelBooking);
 
 userRouter.use(getpage404);
 module.exports = userRouter;

@@ -24,7 +24,10 @@
         <div class="nav-actions" style="display: flex; align-items: center; gap: 16px;">
            <span style="font-weight: 500; font-size: 0.95rem; color: #444;">Hi, <%= user ? user.FirstName : 'Host' %></span>
            <a href="/user" style="text-decoration: none; color: #222; font-weight: 600; font-size: 0.9rem; padding: 8px 16px; border-radius: 24px; transition: background 0.2s;" onmouseover="this.style.background='#f1f1f1'" onmouseout="this.style.background='transparent'">Switch to User</a>
-           <a href="/auth/Host/logout" class="btn btn-secondary" style="border-radius: 24px; padding: 6px 16px; font-size: 0.9rem;">Log Out</a>
+           <form action="/auth/Host/logout" method="POST" style="display: inline;">
+               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+               <button type="submit" class="btn btn-secondary" style="border-radius: 24px; padding: 6px 16px; font-size: 0.9rem; cursor: pointer;">Log Out</button>
+           </form>
         </div>
     </div>
 </nav>

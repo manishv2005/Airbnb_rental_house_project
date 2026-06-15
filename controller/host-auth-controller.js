@@ -40,7 +40,7 @@ catch (err) {
 
 exports.postHostSignup = async (req, res) => {
     // the post request always can make by a user
-    if (!req    .session.user) {
+    if (!req.session.user) {
         return res.redirect('/auth/user/login');
     }
     try {
@@ -102,7 +102,7 @@ exports.postHostLogin = async (req, res) => {
                 })
             }
             req.session.host = {
-                HostId: host[0].HostId,
+                HostId: host[0].UserId,
                 TaxId: host[0].TaxId,
                 PhoneNumber: host[0].PhoneNumber,
             }
@@ -135,7 +135,7 @@ exports.postHostLogin = async (req, res) => {
 
 };
 
-exports.getHostLogout = (req, res) => {
+exports.postHostLogout = (req, res) => {
    if (!req.session) {
       return res.redirect('/');
    }

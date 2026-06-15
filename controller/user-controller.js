@@ -193,9 +193,10 @@ exports.postConfirmBooking = async (req, res) => {
     
         const [temp] = await Booking.booked(booking_id, user_id);
         if (temp.affectedRows > 0) {
+            
             res.redirect('/user/bookings');
         } else {
-
+            console.log(temp.message) ;
             res.redirect(`/user?error=${encodeURIComponent("your booking got canceelled")}`);
         }
     }

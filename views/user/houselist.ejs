@@ -39,7 +39,6 @@
                                 <div class="home-actions">
                                     <%- include('../partials/fav', {home: home}) %>
                                         <form action="/user/housedetail/<%= home.id %>" method="GET">
-                                            <input type="hidden" name="homeId" value="<%= home.id %>">
                                             <button type="submit" class="btn btn-primary">Book</button>
                                         </form>
                                         <a href="/user/housedetail/<%= home.id %>" class="btn btn-secondary">Details</a>
