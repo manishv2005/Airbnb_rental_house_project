@@ -4,6 +4,7 @@ const HostauthRouter = express.Router();
 const hostauthcontroller = require("../controller/host-auth-controller") 
 const {validateHostSignup, hostLoginValidation} = require('../validator/host-auth-validator') ;
 const {csrfSynchronisedProtection} = require('../utils/csrfSync-Configuration') ;
+const {authLimiter} = require('../utils/rate-limit') ;
 
 
 HostauthRouter.get('/Host', async (req, res) => {
@@ -40,10 +41,10 @@ HostauthRouter.get('/Host', async (req, res) => {
 
 
 HostauthRouter.get('/Host/signup', hostauthcontroller.getHostSignup);
-HostauthRouter.post('/Host/signup',csrfSynchronisedProtection, validateHostSignup, hostauthcontroller.postHostSignup);
+HostauthRouter.post('/Host/signup',authLimiter,csrfSynchronisedProtection, validateHostSignup, hostauthcontroller.postHostSignup);
 
 HostauthRouter.get('/Host/login', hostauthcontroller.getHostLogin);
-HostauthRouter.post('/Host/login',csrfSynchronisedProtection, hostLoginValidation, hostauthcontroller.postHostLogin);
+HostauthRouter.post('/Host/login',authLimiter,csrfSynchronisedProtection, hostLoginValidation, hostauthcontroller.postHostLogin);
 
 HostauthRouter.post('/Host/logout',csrfSynchronisedProtection ,hostauthcontroller.postHostLogout);
 

@@ -10,8 +10,10 @@ const fs = require('fs');
 const express = require('express'); // this is used to make an application function
 // this is used to  to handle the mutiform data 
 const session = require("express-session");
-const { generateToken, csrfSynchronisedProtection } = require('./utils/csrfSync-Configuration');
+const { limiter } = require('./utils/rate-limit');
 
+const { generateToken, csrfSynchronisedProtection } = require('./utils/csrfSync-Configuration');
+const {urlencode_Config} = require('./utils/urlencoded-config');
 
 //export local module 
 const hostRouter = require('./routes/host');
@@ -38,7 +40,23 @@ app.set('view engine', 'ejs');
 
 app.disable('x-powered-by'); // this hide that which server is running this application 
 
+// Serve static files FIRST to prevent unnecessary overhead for assets
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use(limiter);
+
 app.use(session(session_options));
+
+app.use(express.urlencoded(urlencode_Config));
+
+
+
+//middlewares  to print req and method
+app.use((req, res, next) => {
+    console.log(req.url, req.method);
+    next();
+});
 
 
 app.use((req, res, next) => {
@@ -50,24 +68,6 @@ app.use((req, res, next) => {
         enumerable: true // REQUIRED: Express needs this to be true to pass it to EJS
     });
 
-    next();
-});
-
-app.use(express.urlencoded({ extended: true }));
-
-app.use(express.json());
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-
-
-
-
-//middlewares  to print req and method
-app.use((req, res, next) => {
-    console.log(req.url, req.method);
     next();
 });
 
@@ -87,20 +87,19 @@ app.get('/', (req, res, next) => {
 });
 
 
-
-
-
-
 app.use('/auth', UserauthRouter, HostauthRouter);
 app.use('/host', hostRouter);
 app.use('/user', userRouter);
-
 app.get('/500', errorController.getpage500);
+
 
 //middleware that handle unvalid page
 app.use((req, res, next) => {
-    res.render('pagenotfound');
+    console.log("pagenotfound")
+    res.status(404).render('pagenotfound');
 });
+
+
 
 app.use((err, req, res, next) => {
     console.log(err)
@@ -117,15 +116,13 @@ app.use((err, req, res, next) => {
             });
         }
     };
-    next(err) ;
+
+    
+        
+    next(err);
 });
 
 
-
-
-
-// setting port and listen to them
-// setting port and listen to them
 const port = 4000;
 
 
