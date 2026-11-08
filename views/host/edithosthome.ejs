@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= (editing==true||locals.errors) ? "Edit Property — Host Dashboard" : "Add Property — Host Dashboard" %></title>
+    <title>
+        <%= (editing==true||locals.errors) ? "Edit Property — Host Dashboard" : "Add Property — Host Dashboard" %>
+    </title>
     <link rel="stylesheet" href="/user-core.css">
     <link rel="stylesheet" href="/addhomehost.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <%- include('../partials/navbar') %>
 
-    <!-- <div class="add-homehost-container">
+        <!-- <div class="add-homehost-container">
         <h1 class="add-homehost-title">
             <%= (editing==true||locals.errors) ? "Edit Property Details" : "Publish a New Property" %>
         </h1>
@@ -28,54 +32,54 @@
 
 
 
-     
-        
-        <form action="/host/<%=(editing==true)?'edit-home':'add-home'%>" method="POST" class="add-homehost-form" enctype="multipart/form-data">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <input type="hidden" name="id" value="<%= (editing==true) ? home.id : '' %>">
-            
-            <div class="add-homehost-field">
-                <label for="name" class="add-homehost-label">Property Name</label>
-                <input type="text" id="name" name="name" class="add-homehost-input" 
-                       placeholder="e.g. Modern Beachside Villa" 
-                       value="<%= (editing==true||locals.errors) ? home.name : '' %>" required>
+
+
+            <form action="/host/<%=(editing==true)?'edit-home':'add-home'%>" method="POST" class="add-homehost-form"
+                enctype="multipart/form-data">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="id" value="<%= (editing==true) ? home.id : '' %>">
+
+                <div class="add-homehost-field">
+                    <label for="name" class="add-homehost-label">Property Name</label>
+                    <input type="text" id="name" name="name" class="add-homehost-input"
+                        placeholder="e.g. Modern Beachside Villa"
+                        value="<%= (editing==true||locals.errors) ? home.name : '' %>" required>
+                </div>
+
+                <div class="add-homehost-field">
+                    <label for="number" class="add-homehost-label">Property Number/ID</label>
+                    <input type="text" id="number" name="number" class="add-homehost-input" placeholder="e.g. BLD123"
+                        value="<%= (editing==true||locals.errors) ? home.number : '' %>" required>
+                </div>
+
+                <div class="add-homehost-field">
+                    <label for="price" class="add-homehost-label">Nightly Price ($)</label>
+                    <input type="number" id="price" name="price" class="add-homehost-input" placeholder="Enter amount"
+                        value="<%= (editing==true||locals.errors) ? home.price : '' %>" required>
+                </div>
+
+                <div class="add-homehost-field">
+                    <label for="description" class="add-homehost-label">Description</label>
+                    <textarea id="description" name="description" class="add-homehost-textarea"
+                        placeholder="Describe the unique features of your stay..."
+                        required><%= (editing===true||locals.errors) ? home.description : '' %></textarea>
+                </div>
+
+                <div class="add-homehost-field">
+                    <label for="image" class="add-homehost-label">Image </label>
+                    <input type="file" id="image" accept="image/*" name="image" class="add-homehost-file"
+                        placeholder="https://example.com/image.jpg"
+                        value="<%= (editing==true||locals.errors) ? home.image : '' %>">
+                </div>
+
+                <button type="submit" class="add-homehost-btn">
+                    <%= (editing==true) ? "Save Changes" : "Publish Property" %>
+                </button>
+
+                <a href="/host"
+                    style="text-align: center; color: var(--muted); font-size: 0.9rem; margin-top: 8px; text-decoration: none;">Cancel</a>
+            </form>
             </div>
-
-            <div class="add-homehost-field">
-                <label for="number" class="add-homehost-label">Property Number/ID</label>
-                <input type="text" id="number" name="number" class="add-homehost-input"
-                       placeholder="e.g. BLD123"
-                       value="<%= (editing==true||locals.errors) ? home.number : '' %>" required>
-            </div>
-
-            <div class="add-homehost-field">
-                <label for="price" class="add-homehost-label">Nightly Price ($)</label>
-                <input type="number" id="price" name="price" class="add-homehost-input"
-                       placeholder="Enter amount"
-                       value="<%= (editing==true||locals.errors) ? home.price : '' %>" required>
-            </div>
-
-            <div class="add-homehost-field">
-                <label for="description" class="add-homehost-label">Description</label>
-                <textarea id="description" name="description" class="add-homehost-textarea"
-                          placeholder="Describe the unique features of your stay..." required><%= (editing===true||locals.errors) ? home.description : '' %></textarea>
-            </div>
-
-            <div class="add-homehost-field">
-                <label for="image" class="add-homehost-label">Image </label>
-                <input type="file" id="image"
-                accept="image/*"
-                name="image" class="add-homehost-file"
-                       placeholder="https://example.com/image.jpg"
-                       value="<%= (editing==true||locals.errors) ? home.image : '' %>" >
-            </div>
-
-            <button type="submit" class="add-homehost-btn">
-                <%= (editing==true) ? "Save Changes" : "Publish Property" %>
-            </button>
-
-            <a href="/host" style="text-align: center; color: var(--muted); font-size: 0.9rem; margin-top: 8px; text-decoration: none;">Cancel</a>
-        </form>
-    </div>
 </body>
+
 </html>

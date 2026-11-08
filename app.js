@@ -1,6 +1,7 @@
 
 const dotenv = require('dotenv');
 dotenv.config();
+
 // core module
 const path = require('path');
 const fs = require('fs');
@@ -8,18 +9,17 @@ const fs = require('fs');
 
 // external module
 const express = require('express'); // this is used to make an application function
-// this is used to  to handle the mutiform data 
 const session = require("express-session");
 const { limiter } = require('./utils/rate-limit');
-
-const { generateToken, csrfSynchronisedProtection } = require('./utils/csrfSync-Configuration');
-const {urlencode_Config} = require('./utils/urlencoded-config');
+const { generateToken } = require('./utils/csrfSync-Configuration');
+const { urlencode_Config } = require('./utils/urlencoded-config');
 
 //export local module 
 const hostRouter = require('./routes/host');
 const userRouter = require('./routes/user');
 const UserauthRouter = require('./routes/user-auth');
 const HostauthRouter = require('./routes/host-auth');
+
 const { Home } = require('./models/model');
 const { Booking } = require('./models/booking');
 const errorController = require('./controller/error-controller');
@@ -49,7 +49,7 @@ app.use(limiter);
 app.use(session(session_options));
 
 app.use(express.urlencoded(urlencode_Config));
-
+app.use(express.json());
 
 
 //middlewares  to print req and method
@@ -117,8 +117,8 @@ app.use((err, req, res, next) => {
         }
     };
 
-    
-        
+
+
     next(err);
 });
 

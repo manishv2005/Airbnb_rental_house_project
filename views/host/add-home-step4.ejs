@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 4: Photos & Price | AIrbnb</title>
+    <link rel="stylesheet" href="/user-core.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/add-home-step4.css">
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <%- include('../partials/errors') %>
+
+    <div class="main-container">
+        <h2 class="step-title">Step 4: Upload Photos & Set Price</h2>
+        <p class="step-subtitle">Add great photos to attract guests and set your nightly rate.</p>
+
+        <form action="<%= locals.editing ? '/host/edit-home-step4/' + (typeof secure_id !== 'undefined' ? secure_id : '') : '/host/add-home-step4/' + (typeof secure_id !== 'undefined' ? secure_id : '') %>" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+
+            <h3 class="section-heading">Photo Upload</h3>
+            <div class="upload-container">
+                <div class="dropzone" id="dropzone">
+                    <div class="dropzone-content">
+                        <svg class="camera-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                        <p><strong>Drag & Drop photos</strong></p>
+                        <p class="text-muted">or click to browse (Min 5 photos required)</p>
+                    </div>
+                    <input type="file" id="photos" name="images" multiple accept="image/jpeg, image/jpg, image/png" <%=(oldInput?.price? "":"required") %> >
+                </div>
+                
+                <div class="preview-container" id="preview-container">
+                    <!-- Photo previews will be generated here by JS -->
+                </div>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text">0 Photos Uploaded</span>
+                </div>
+            </div>
+
+            <h3 class="section-heading">Nightly Rate</h3>
+            <div class="price-container">
+                <div class="price-input-wrapper">
+                    <span class="currency-symbol">₹</span>
+                    <input type="number" name="price" id="price" placeholder="5,400" min="1" value="<%= locals.oldInput && oldInput.price ? oldInput.price : '' %>" required>
+                    <span class="price-suffix">/ night</span>
+                </div>
+                <p class="price-hint">Average nightly rate for similar properties in your area: ₹4,500 - ₹6,800. Adjust your price anytime.</p>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="submit-btn" id="save-btn">Save & Continue</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('photos');
+        const previewContainer = document.getElementById('preview-container');
+        const dropzone = document.getElementById('dropzone');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        
+        let selectedFiles = [];
+        
+        // Handle click on dropzone
+        dropzone.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            selectedFiles = [...selectedFiles, ...files];
+            
+            // Re-assign to FileList (optional, but good if we submit form naturally without ajax)
+            // For a simple EJS form, we need the fileInput to have the actual files.
+            // Using a DataTransfer object to update the actual input's files
+            const dt = new DataTransfer();
+            selectedFiles.forEach(file => dt.items.add(file));
+            fileInput.files = dt.files;
+            
+            renderPreviews();
+        });
+        
+        function renderPreviews() {
+            previewContainer.innerHTML = ''; 
+            
+            const titles = ["Cover Photo", "Bedroom", "Elegant Kitchen", "Sunny Balcony", "Modern Bathroom", "Exterior Area"];
+            
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    if(index === 0) {
+                        div.classList.add('cover-photo');
+                    }
+                    
+                    const titleText = index < titles.length ? titles[index] : `Photo ${index + 1}`;
+                    
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        ${index === 0 ? '<span class="cover-badge">COVER PHOTO</span>' : ''}
+                        <button type="button" class="remove-btn" data-index="${index}">×</button>
+                        <div class="photo-caption">${index + 1}. ${titleText}</div>
+                    `;
+                    previewContainer.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            updateProgress(selectedFiles.length);
+        }
+        
+        // Event delegation for remove buttons
+        previewContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-btn')) {
+                e.stopPropagation();
+                const index = parseInt(e.target.getAttribute('data-index'), 10);
+                
+                // Remove from array
+                selectedFiles.splice(index, 1);
+                
+                // Update file input
+                const dt = new DataTransfer();
+                selectedFiles.forEach(file => dt.items.add(file));
+                fileInput.files = dt.files;
+                
+                renderPreviews();
+            }
+        });
+        
+        function updateProgress(count) {
+            const minPhotos = 5;
+            const percentage = Math.min((count / minPhotos) * 100, 100);
+            progressFill.style.width = `${percentage}%`;
+            
+            if (count >= minPhotos) {
+                progressFill.style.backgroundColor = '#10B981'; // Green when complete
+            } else {
+                progressFill.style.backgroundColor = '#cbd5e1'; // Gray otherwise
+            }
+            
+            progressText.innerText = `${count} Photos Uploaded`;
+        }
+        
+        // Drag and drop styles
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+        
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('dragover');
+        });
+        
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            
+            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+            selectedFiles = [...selectedFiles, ...files];
+            
+            const dt = new DataTransfer();
+            selectedFiles.forEach(file => dt.items.add(file));
+            fileInput.files = dt.files;
+            
+            renderPreviews();
+        });
+    </script>
+</body>
+</html>

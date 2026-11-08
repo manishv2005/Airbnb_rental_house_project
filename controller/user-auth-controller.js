@@ -135,7 +135,7 @@ exports.postUserLogout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error('Error saving session after user logout:', err);
-            return res.redirect('/user/userhomepage');
+            return res.redirect('/user');
         }
         return res.redirect('/');
     });

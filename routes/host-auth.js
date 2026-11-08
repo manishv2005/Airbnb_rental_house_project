@@ -15,7 +15,7 @@ HostauthRouter.get('/Host', async (req, res) => {
       return res.redirect('/auth/user/login');
    }
 
-   const [host] = await Host.findByUserId(user.UserId); //here thi is a select reques so it does not affect the row
+   const [host] = await Host.findByUserId(user.UserId);
 
    if (host && host.length > 0) {
       if (!req.session.host) {

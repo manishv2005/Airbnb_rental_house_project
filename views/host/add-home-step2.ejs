@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Step 2: Bedrooms Setup | AIrbnb</title>
+    <link rel="stylesheet" href="/user-core.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/add-home-step2.css">
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+    
+    <%- include('../partials/errors') %>
+
+    <div class="main-container">
+        <h2>Bedroom Setup</h2>
+        
+        <form id="step2Form" action="<%= locals.editing ? '/host/edit-home-step2/' + secure_id : '/host/add-home-step2/' + secure_id %>" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" id="bedroomData" name="bedroomData" value="">
+
+            <div id="bedroom-list">
+                <% for(let i = 1; i <= total_bedrooms; i++) { %>
+                    <div class="room-card" id="card-room-<%= i %>">
+                        <div>
+                            <h4>Bedroom <%= i %></h4>
+                            <p class="summary-text" id="summary-<%= i %>">No beds setup yet.</p>
+                        </div>
+                        <button type="button" class="edit-btn" onclick="openModal(Number('<%= i %>'))">✎ Edit Setup</button>
+                    </div>
+                <% } %>
+            </div>
+
+            <button type="submit" style="margin-top:20px; padding: 15px; width: 100%; background: #ff5a5f; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">
+                Save & Continue
+            </button>
+        </form>
+    </div>
+
+    <div class="modal-overlay" id="roomModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Bedroom 1 Setup</h3>
+                <span class="close-btn" onclick="closeModal()">×</span>
+            </div>
+            
+            <div class="modal-body">
+                <div class="counter-row">
+                    <span>Double Bed</span>
+                    <div class="counter-controls">
+                        <button type="button" class="counter-btn" onclick="updateCounter('double', -1)">-</button>
+                        <span id="count-double">0</span>
+                        <button type="button" class="counter-btn" onclick="updateCounter('double', 1)">+</button>
+                    </div>
+                </div>
+                <div class="counter-row">
+                    <span>Single Bed</span>
+                    <div class="counter-controls">
+                        <button type="button" class="counter-btn" onclick="updateCounter('single', -1)">-</button>
+                        <span id="count-single">0</span>
+                        <button type="button" class="counter-btn" onclick="updateCounter('single', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="toggle-row">
+                    <span>Attached Bathroom (Ensuite)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="ensuite-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button type="button" class="btn-save" onclick="saveModalData()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Getting total_bedrooms from EJS variable
+        const totalBedrooms = Number('<%= total_bedrooms %>');
+        let currentEditingRoom = null; // Track kaunsa kamra edit ho raha hai
+        
+        // 1. Initialize State Array for all rooms
+        let roomData = [];
+        const savedData = JSON.parse('<%- oldInput %>');
+        console.log("this is saved data",savedData);
+        
+        for(let i = 1; i <= totalBedrooms; i++) {
+            let savedRoom = Array.isArray(savedData) ? savedData.find(r => r.room_number === i) : null;
+            if (savedRoom) {
+                roomData.push(savedRoom);
+            } else {
+                roomData.push({
+                    room_number: i,
+                    beds: { double: 0, single: 0 },
+                    is_ensuite: false
+                });
+            }
+        }
+
+        // Initialize UI on page load with existing data
+        window.addEventListener('DOMContentLoaded', () => {
+            roomData.forEach(data => {
+                let summary = [];
+                if(data.beds.double > 0) summary.push(`${data.beds.double} Double`);
+                if(data.beds.single > 0) summary.push(`${data.beds.single} Single`);
+                
+                let summaryText = summary.length > 0 ? summary.join(', ') : 'No beds setup yet.';
+                if(data.is_ensuite) summaryText += ' • Attached Bath';
+                
+                document.getElementById(`summary-${data.room_number}`).innerText = summaryText;
+            });
+        });
+
+        // 2. Open Modal Logic
+        function openModal(roomNumber) {
+            currentEditingRoom = roomNumber;
+            const data = roomData[roomNumber - 1]; // Array index starts at 0
+
+            // Set Title
+            document.getElementById('modalTitle').innerText = `Bedroom ${roomNumber} Setup`;
+
+            // Set values in modal based on stored array data
+            document.getElementById('count-double').innerText = data.beds.double;
+            document.getElementById('count-single').innerText = data.beds.single;
+            document.getElementById('ensuite-toggle').checked = data.is_ensuite;
+
+            // Show Modal
+            document.getElementById('roomModal').style.display = 'flex';
+        }
+
+        // 3. Close Modal Logic
+        function closeModal() {
+            document.getElementById('roomModal').style.display = 'none';
+            currentEditingRoom = null;
+        }
+
+        // 4. Update Counter Logic (Inside Modal)
+        function updateCounter(bedType, change) {
+            const el = document.getElementById(`count-${bedType}`);
+            let count = parseInt(el.innerText) + change;
+            if (count < 0) count = 0; // Prevent negative beds
+            el.innerText = count;
+        }
+
+        // 5. Save Data from Modal to Array (The "No Auto-Submit" Magic)
+        function saveModalData() {
+            // Read values from modal
+            const doubleCount = parseInt(document.getElementById('count-double').innerText);
+            const singleCount = parseInt(document.getElementById('count-single').innerText);
+            const isEnsuite = document.getElementById('ensuite-toggle').checked;
+
+            // Update our State Array
+            const index = currentEditingRoom - 1;
+            roomData[index].beds.double = doubleCount;
+            roomData[index].beds.single = singleCount;
+            roomData[index].is_ensuite = isEnsuite;
+
+            // Update UI Summary Text on the main page
+            let summary = [];
+            if(doubleCount > 0) summary.push(`${doubleCount} Double`);
+            if(singleCount > 0) summary.push(`${singleCount} Single`);
+            
+            let summaryText = summary.length > 0 ? summary.join(', ') : 'No beds setup yet.';
+            if(isEnsuite) summaryText += ' • Attached Bath';
+            
+            document.getElementById(`summary-${currentEditingRoom}`).innerText = summaryText;
+
+            // Close Modal
+            closeModal();
+        }
+
+        // 6. Form Submission Logic (Sending cleanly to Backend)
+        document.getElementById('step2Form').addEventListener('submit', function(e) {
+            // Put the entire roomData array into the hidden input as a JSON string
+            document.getElementById('bedroomData').value = JSON.stringify(roomData);
+            
+            // Allow form to submit normally now!
+            // Backend will receive req.body.bedroomData which is a perfect JSON string
+        });
+
+
+
+
+    </script>
+</body>
+</html>

@@ -18,52 +18,95 @@
             <p class="page-subtitle">Manage and refine your hosted stays</p>
         </header>
 
-        <%- include('../partials/errors', { errors: typeof errors !== 'undefined' ? errors : [] }) %>
+        <%- include('../partials/errors', { errors: typeof errors !=='undefined' ? errors : [] }) %>
 
-        <div class="container">
-            <% if (typeof houselist !== 'undefined' && houselist && houselist.length > 0) { %>
-                <div class="home-grid">
-                    <% houselist.forEach(home=> { %>
+            <div class="container">
+                <% if (typeof houselist !=='undefined' && houselist && houselist.length> 0) { %>
+                    <div class="home-grid">
+                        <% houselist.forEach(home=> { %>
 
-                        <div class="home-card">
-                            <div class="home-image-wrapper">
-                                <img src="<%='/'+ home.image %>" alt="<%= home.name %>" class="home-image">
-                            </div>
-
-                            <div class="home-content">
-                                <h2 class="home-name">
-                                    <%= home.name %>
-                                </h2>
-
-                                <div class="home-price-tag">
-                                    $<%= home.price %><span class="price-unit"> /night</span>
+                            <div class="home-card">
+                                <div class="home-image-wrapper">
+                                    <% if (home.cover_image) { %>
+                                        <img src="<%='/'+ home.cover_image %>" alt="<%= home.name || 'Property' %>"
+                                            class="home-image">
+                                        <% } else { %>
+                                            <div
+                                                style="height: 100%; width: 100%; min-height: 200px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 0.9rem;">
+                                                No Image Provided
+                                            </div>
+                                            <% } %>
                                 </div>
-                                <p class="home-location">Property Number: <%= home.number %></p>
+
+                                <div class="home-content">
+                                    <h2 class="home-name">
+                                        <%= home.name ? home.name : 'Untitled Property' %>
+                                            <% if (home.status==='draft' ) { %>
+                                                <span
+                                                    style="font-size: 0.7rem; background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px;">Draft</span>
+                                                <% } else if (home.status==='unlisted' ) { %>
+                                                    <span
+                                                        style="font-size: 0.7rem; background: #64748b; color: white; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px;">Unlisted</span>
+                                                    <% } else { %>
+                                                        <span
+                                                            style="font-size: 0.7rem; background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px;">Active</span>
+                                                        <% } %>
+                                    </h2>
+
+                                    <div class="home-price-tag">
+                                        <% if (home.price) { %>
+                                            $<%= home.price %><span class="price-unit"> /night</span>
+                                                <% } else { %>
+                                                    <span
+                                                        style="color: #94a3b8; font-size: 0.9rem; font-weight: 500;">Price
+                                                        not set</span>
+                                                    <% } %>
+                                    </div>
+                                    <p class="home-location">
+                                        <i class="fas fa-map-marker-alt" style="margin-right: 4px; color: #64748b;"></i>
+                                        <% if (home.city || home.country) { %>
+                                            <%= [home.city, home.country].filter(Boolean).join(', ') %>
+                                    <% } else { %>
+                                        Location not set
+                                    <% } %>
+                                </p>
 
                                 <div class="home-actions">
-                                    <a href="/host/edit-home/<%= home.id %>?editing=true" class="btn btn-secondary" style="flex:1; text-align: center;">Edit Details</a>
+                                    <% if (home.status === 'draft') { %>
+                                                <a href="/host/add-home-step1?id=<%= home.id %>" class="btn btn-secondary"
+                                                    style="flex:1; text-align: center;">Continue Setup</a>
+                                                <% } else { %>
+                                                    <a href="/host/edit-home-step1?id=<%= home.id %>"
+                                                        class="btn btn-secondary"
+                                                        style="flex:1; text-align: center;">Edit Details</a>
+                                                    <% } %>
 
-                                    <form action="/host/delete-home/<%= home.id %>" method="POST" style="flex:1;">
-                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button type="submit" class="btn btn-primary" style="width: 100%; background: linear-gradient(90deg, #E11D48 0%, #BE123C 100%);"
-                                            onclick="return confirm('Archive this property?');">Delete</button>
-                                    </form>
+                                                        <form action="/host/delete-home/<%= home.id %>" method="POST"
+                                                            style="flex:1;">
+                                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                            <button type="submit" class="btn btn-primary"
+                                                                style="width: 100%; background: linear-gradient(90deg, #E11D48 0%, #BE123C 100%);"
+                                                                onclick="return confirm('Archive this property?');">Delete</button>
+                                                        </form>
                                 </div>
                             </div>
-                        </div>
+                    </div>
                     <% }); %>
-                </div>
+            </div>
             <% } else { %>
-                <div style="text-align: center; padding: 60px 20px; background: rgba(0,0,0,0.02); border-radius: 12px; margin-bottom: 20px;">
+                <div
+                    style="text-align: center; padding: 60px 20px; background: rgba(0,0,0,0.02); border-radius: 12px; margin-bottom: 20px;">
                     <h2 style="color: var(--text-primary); margin-bottom: 12px;">No Properties Yet</h2>
-                    <p style="color: var(--text-secondary);">You haven't listed any homes. Click the button below to get started!</p>
+                    <p style="color: var(--text-secondary);">You haven't listed any homes. Click the button below to get
+                        started!</p>
                 </div>
-            <% } %>
-        </div>
+                <% } %>
+                    </div>
 
-        <div class="container" style="text-align: center; margin: 40px auto 80px;">
-            <a class="btn btn-primary" href="/host/add-home" style="padding: 14px 28px; font-size: 1rem;">Add New Stay</a>
-        </div>
+                    <div class="container" style="text-align: center; margin: 40px auto 80px;">
+                        <a class="btn btn-primary" href="/host/add-home-step1"
+                            style="padding: 14px 28px; font-size: 1rem;">Add New Stay</a>
+                    </div>
 </body>
 
 </html>

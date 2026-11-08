@@ -22,18 +22,18 @@ exports.getHostLogin = async (req, res) => {
         return res.redirect('/host');
     }
     try {
-    const [hostexists] = await Host.findByUserId(req.session.user.UserId);
-    if (hostexists && hostexists.length > 0) {
-        return res.render('./auth/Host/login', { errors: null, oldInput: null });
+        const [hostexists] = await Host.findByUserId(req.session.user.UserId);
+        if (hostexists && hostexists.length > 0) {
+            return res.render('./auth/Host/login', { errors: null, oldInput: null });
+        }
+        else {
+            return res.redirect('/auth/Host/signup');
+        }
     }
-    else {
-        return res.redirect('/auth/Host/signup');
+    catch (err) {
+        console.error("critical error in getHostLogin controller", err)
+        res.redirect(`/user?errors=${encodeURIComponent("Critical error in host login")}`);
     }
-}
-catch (err) {
-    console.error("critical error in getHostLogin controller",err)
-     res.redirect(`/user?errors=${encodeURIComponent("Critical error in host login")}`);
-}
 }
 
 
@@ -57,7 +57,7 @@ exports.postHostSignup = async (req, res) => {
                 }
             });
         }
-        
+
         const { phonenumber, taxid, password } = req.body;
         const hashpassword = await bcrypt.hash(password, 12);
         const host = new Host(req.session.user.UserId, taxid, phonenumber, hashpassword);
@@ -92,7 +92,7 @@ exports.postHostLogin = async (req, res) => {
 
         const [host] = await Host.findByUserId(req.session.user.UserId);
 
-        if ( host.length > 0) {
+        if (host.length > 0) {
             const isMatch = await bcrypt.compare(password, host[0].password);
             if (!isMatch) {
                 console.log("error : password doesn't match")
@@ -102,20 +102,22 @@ exports.postHostLogin = async (req, res) => {
                 })
             }
             req.session.host = {
-                HostId: host[0].UserId,
+                hostId: host[0].hostId,
                 TaxId: host[0].TaxId,
+                UserId:host[0].UserId,
                 PhoneNumber: host[0].PhoneNumber,
             }
-            
-            await new Promise ((resolve , reject)=> {req.session.save(err=> {
-                if (err) {
-                    return reject(err)
-                }
-                return resolve() ;
-            })
+
+            await new Promise((resolve, reject) => {
+                req.session.save(err => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    return resolve();
+                })
             });
-            
-            return res.redirect('/host'); 
+
+            return res.redirect('/host');
 
         } else {
             console.log("error : host not found")
@@ -126,7 +128,7 @@ exports.postHostLogin = async (req, res) => {
         }
 
     } catch (error) {
-        console.error("critical error in postHostLogin controller",error)
+        console.error("critical error in postHostLogin controller", error)
         return res.render('./auth/Host/login', {
             errors: ["error critical server error. please try again "],
             oldInput: { password: '' }
@@ -136,23 +138,26 @@ exports.postHostLogin = async (req, res) => {
 };
 
 exports.postHostLogout = (req, res) => {
-   if (!req.session) {
-      return res.redirect('/');
-   }
+    if (!req.session) {
+        return res.redirect('/');
+    }
 
-   //  Delete only the host session data (keep the user logged in)
-   delete req.session.host;
+    //  Delete only the host session data (keep the user logged in)
+    delete req.session.host;
 
-   //  Save the session to apply the changes
-   req.session.save(err => {
-      if (err) {
-         console.error('Error saving session after host logout:', err);
-         return res.redirect('/host');
-      } 
-      res.redirect('/user');
-   });
+    //  Save the session to apply the changes
+    req.session.save(err => {
+        if (err) {
+            console.error('Error saving session after host logout:', err);
+            return res.redirect('/host');
+        }
+        res.redirect('/user');
+    });
 
 
 
 
 }
+
+
+

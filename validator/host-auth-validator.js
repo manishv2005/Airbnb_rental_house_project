@@ -116,7 +116,7 @@ exports.checkHostExists = async (req) => {
     try {
     const {phonenumber, taxid } = req.body;
         const [rows] = await Host.PhoneNumberOrTaxIdExist(phonenumber, taxid);
-        if (rows.length > 0) {
+        if (rows.length>0) {
             return true ;
         }
         return false ;

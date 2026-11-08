@@ -1,29 +1,29 @@
 const { body, param, query, validationResult } = require('express-validator');
 
 exports.validateReservation = [
-    body('homeId', 'invalid request').notEmpty().isNumeric(),
-    body('checkinDate', 'checkin date is required').notEmpty().isDate().withMessage('Invalid date format').custom((value , {req})=> {
+    body('homeId', 'invalid request').notEmpty().trim().isLength({min:8,max:8}),
+    body('checkinDate', 'checkin date is required').notEmpty().isDate().withMessage('Invalid date format').custom((value, { req }) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0); // remove time, keep only date
         const checkin = new Date(value);
-        if(checkin < today) {
+        if (checkin < today) {
             throw new Error('you enter a past date');
         }
         return true;
     }),
-    body('checkoutDate', 'checkout date is required').notEmpty().isDate().withMessage('Invalid date format').custom((value , {req})=> {
+    body('checkoutDate', 'checkout date is required').notEmpty().isDate().withMessage('Invalid date format').custom((value, { req }) => {
         const checkin = new Date(req.body.checkinDate);
         const checkout = new Date(value);
-        if(checkin >= checkout) {
+        if (checkin >= checkout) {
             throw new Error('checkout date should be greater than checkin date');
         }
         return true;
-    }) ,
+    }),
 
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const errorMsg = errors.array().map(e => e.msg) ;
+            const errorMsg = errors.array().map(e => e.msg);
             return res.redirect(`/user/housedetail/${req.body.homeId}?error=${encodeURIComponent(errorMsg)}`);
         }
         next();
@@ -48,7 +48,7 @@ exports.validateBookingId = [
 
 
 exports.validateHomeId = [
-    body('homeId', 'Invalid request').notEmpty().isNumeric(),
+    body('homeId', 'Invalid request').notEmpty(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -59,13 +59,14 @@ exports.validateHomeId = [
 ]
 
 exports.validateHouseDetailQuery = [
-    param('homeId', 'Invalid request').notEmpty().isNumeric(),
+    param('homeId', 'Invalid request').notEmpty().trim().isLength({min:1}),
     query('error').optional().trim().escape(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.redirect('/user');
         }
+        console.log('complete_validation')
         next();
     }
 ]

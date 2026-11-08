@@ -1,0 +1,11 @@
+.main-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+.map-container { margin-bottom: 20px; }
+#map { height: 450px; width: 100%; border-radius: 12px; margin-top: 10px; background-color: #f3f4f6; }
+.search-tools { display: flex; gap: 10px; margin-bottom: 10px; }
+#smart-search-bar { flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; }
+#locate-me-btn { padding: 12px; cursor: pointer; background: #f8f9fa; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; }
+.form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+.form-group label { margin-bottom: 5px; font-weight: 500; }
+.form-group input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; }
+input[readonly] { background-color: #f1f5f9; color: #64748b; cursor: not-allowed; }
+.submit-btn { padding: 15px; background: #ff5a5f; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; width: 100%; font-family: inherit; }

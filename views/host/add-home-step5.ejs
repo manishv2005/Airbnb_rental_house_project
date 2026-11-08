@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Details - Host Onboarding</title>
+    <link rel="stylesheet" href="/property-details.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="header-title">Tell us about your place</h1>
+        <p class="header-subtitle">Share the basic details and rules to set the right expectations for guests.</p>
+
+        <form id="onboardingForm">
+            <!-- Client Side Error Alert (Hidden by default) -->
+            <div class="error-alert-container" id="clientErrorAlert" style="display: none; margin-bottom: 20px;">
+                <div class="error-alert-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                </div>
+                <div class="error-alert-content">
+                    <ul class="error-alert-list" id="clientErrorList">
+                        <!-- Errors will be injected here via JS -->
+                    </ul>
+                </div>
+            </div>
+
+            <div class="layout-grid">
+                
+                <div class="left-col">
+                    <div class="card">
+                        <div class="card-title">Property Details</div>
+                        
+                        <div class="form-group">
+                            <label for="houseName">House Name</label>
+                            <input type="text" id="houseName" placeholder="E.g., Cozy Villa with Sunset View" value="<%= locals.oldInput && oldInput.houseName ? oldInput.houseName : '' %>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" maxlength="500" placeholder="What makes your place special?..." required oninput="updateCount(this)"><%= locals.oldInput && oldInput.description ? oldInput.description : '' %></textarea>
+                            <div class="char-count" id="descCount"><%= locals.oldInput && oldInput.description ? oldInput.description.length : 0 %> / 500</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-col">
+                    <div class="card">
+                        <div class="card-title">House Rules</div>
+                        
+                        <div class="form-group">
+                            <label>Common Rules (Select all that apply)</label>
+                            <% if(typeof commonRules !== 'undefined' && commonRules && commonRules.length > 0) { %>
+                                <% commonRules.forEach(rule => { %>
+                                    <label class="rule-item">
+                                        <input type="checkbox" class="db-rule-checkbox" value="<%= rule.id %>" <%= locals.oldInput && oldInput.rules && oldInput.rules.selectedCommonRules && oldInput.rules.selectedCommonRules.includes(rule.id) ? 'checked' : '' %>>
+                                        <span class="rule-name"><%= rule.icon %> <%= rule.name %></span>
+                                    </label>
+                                <% }) %>
+                            <% } else { %>
+                                <p style="color: #717171; font-size: 14px;">No common rules found.</p>
+                            <% } %>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 24px;">
+                            <label for="customRules">Custom Rules (Optional)</label>
+                            <textarea id="customRules" style="min-height: 90px;" placeholder="E.g., Please turn off AC when leaving... (Press Enter for new rule)"><%= locals.oldInput && oldInput.rules && oldInput.rules.customRules ? oldInput.rules.customRules.join('\n') : '' %></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn" id="submitBtn">Save & Continue</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Helper function to show errors on the page
+        function showError(messages) {
+            const errorAlert = document.getElementById('clientErrorAlert');
+            const errorList = document.getElementById('clientErrorList');
+            
+            errorList.innerHTML = ''; // Pehle wale errors hatana
+            
+            messages.forEach(msg => {
+                const li = document.createElement('li');
+                li.innerText = msg;
+                errorList.appendChild(li);
+            });
+            
+            errorAlert.style.display = 'flex'; // Error box dikhana
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Upar scroll karna
+        }
+
+        // Character Counter Logic
+        function updateCount(element) {
+            document.getElementById('descCount').innerText = `${element.value.length} / 500`;
+        }
+
+        // Form Submit to JSON Logic
+        document.getElementById('onboardingForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Default page reload rokna
+
+            // Hide previous errors on new submit
+            document.getElementById('clientErrorAlert').style.display = 'none';
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "Saving...";
+            submitBtn.disabled = true;
+
+            // 1. Gather Text Fields
+            const houseName = document.getElementById('houseName').value;
+            const description = document.getElementById('description').value;
+
+            // 2. Gather Selected Rules IDs
+            const checkedBoxes = document.querySelectorAll('.db-rule-checkbox:checked');
+            const selectedRuleIds = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+
+            // 3. Gather Custom Rules (Split by new line into an array)
+            const customRulesText = document.getElementById('customRules').value;
+            const customRulesArray = customRulesText.split('\n')
+                                        .map(rule => rule.trim())
+                                        .filter(rule => rule.length > 0);
+
+            // 4. THE ULTIMATE JSON PAYLOAD
+            const payload = {
+                houseName: houseName,
+                description: description,
+                rules: {
+                    selectedCommonRules: selectedRuleIds, // Array of IDs e.g. [1, 4]
+                    customRules: customRulesArray         // Array of strings
+                },
+                _csrf: '<%= typeof csrfToken !== "undefined" ? csrfToken : "" %>'
+            };
+
+            console.log("JSON Payload ready for Backend:", payload);
+
+            // Get home ID from the URL (assuming the URL is like /host/add-home-step-5/:homeId)
+            const urlParts = window.location.pathname.split('/');
+            const homeId = urlParts[urlParts.length - 1];
+
+            try {
+                // 5. Send JSON to Node.js Backend using Fetch API
+                const response = await fetch(`<%= locals.editing ? '/host/edit-home-step5/' : '/host/add-home-step5/' %>${homeId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // Backend ko JSON expect karne ko kehna
+                        'CSRF-Token': '<%= typeof csrfToken !== "undefined" ? csrfToken : "" %>'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    alert('Property Data Saved Successfully!');
+                    window.location.href = '/host'; // Redirect to dashboard
+                } else {
+                    const errorData = await response.json();
+                    
+                    // Check if multiple errors or single message
+                    let messages = [];
+                    if (errorData.errors && Array.isArray(errorData.errors)) {
+                        messages = errorData.errors;
+                    } else if (errorData.message) {
+                        messages = [errorData.message];
+                    } else {
+                        messages = ["Something went wrong while saving."];
+                    }
+                    
+                    showError(messages); // Redirect ki jagah yahan page par hi error dikhayenge
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError(["Network error or server is down. Please try again."]);
+            } finally {
+                submitBtn.innerText = "Save & Continue";
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -17,47 +17,55 @@
                 <p class="page-subtitle">Discover our most loved properties across the globe.</p>
             </header>
 
-            <%- include('../partials/errors', { errors: typeof errors !== 'undefined' ? errors : [] }) %>
+            <%- include('../partials/errors', { errors: typeof errors !=='undefined' ? errors : [] }) %>
 
-            <% if (houselist&& houselist.length>0) { %>
-                <div class="home-grid">
-                    <% houselist.forEach(home=> { %>
-                        <div class="home-card">
-                            <div class="home-image-wrapper">
-                                <img src="<%= '/' + home.image %>" alt="<%= home.name %>" class="home-image">
-                            </div>
-                            <div class="home-content">
-                                <h2 class="home-name">
-                                    <%= home.name %>
-                                </h2>
-                                <p class="home-location">Property ID: <%= home.number %>
-                                </p>
-                                <div class="home-price-tag">
-                                    $<%= home.price %><span class="price-unit"> /night</span>
+                <% if (houselist&& houselist.length>0) { %>
+                    <div class="home-grid">
+                        <% houselist.forEach(home=> { %>
+                            <div class="home-card">
+                                <div class="home-image-wrapper">
+                                    <img src="<%= home.cover_image ? '/' + home.cover_image : 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&auto=format&fit=crop' %>"
+                                        alt="<%= home.name %>" class="home-image">
                                 </div>
+                                <div class="home-content">
+                                    <h2 class="home-name">
+                                        <%= home.name || 'Untitled Property' %>
+                                    </h2>
+                                    <p class="home-location">
+                                        📍 <%= [home.city, home.country].filter(Boolean).join(', ') || ' Location not set' %> • 👥 <%= home.max_guests ? home.max_guests + ' guests' : 'Guests not set' %>
+                                    </p>
+                                    <div class="home-price-tag">
+                                        <% if (home.price) { %>
+                                            $<%= home.price %><span class="price-unit"> /night</span>
+                                                <% } else { %>
+                                                    <span class="price-unit">Price not set</span>
+                                                    <% } %>
+                                    </div>
 
-                                <div class="home-actions">
-                                    <%- include('../partials/fav', {home: home}) %>
-                                        <form action="/user/housedetail/<%= home.id %>" method="GET">
-                                            <button type="submit" class="btn btn-primary">Book Now</button>
-                                        </form>
+                                    <div class="home-actions">
+                                        <%- include('../partials/fav', {home: home}) %>
+
+                                            <form action="/user/housedetail/<%= home.id %>" method="GET">
+                                                <button type="submit" class="btn btn-primary">Book Now</button>
+                                            </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <% }); %>
-                </div>
-                <% }else { %>
-                    <div
-                        style="text-align: center; padding: 80px 20px; background: white; border-radius: 16px; border: 1px dashed #ccc;">
-                        <h2 style="color: #666;">No top rated homes available.</h2>
-                        <p style="margin-top: 10px; color: #999;">Please check back later.</p>
+                            <% }); %>
                     </div>
-                    <% } %>
-
-                        <div class="actions" style="margin-top: 40px; display: flex; gap: 20px; padding-bottom: 40px;">
-                            <a class="btn btn-secondary" href="/user/houselist">See all homes</a>
-                            <a class="btn btn-secondary" href="/">← Main Page</a>
+                    <% }else { %>
+                        <div
+                            style="text-align: center; padding: 80px 20px; background: white; border-radius: 16px; border: 1px dashed #ccc;">
+                            <h2 style="color: #666;">No top rated homes available.</h2>
+                            <p style="margin-top: 10px; color: #999;">Please check back later.</p>
                         </div>
+                        <% } %>
+
+                            <div class="actions"
+                                style="margin-top: 40px; display: flex; gap: 20px; padding-bottom: 40px;">
+                                <a class="btn btn-secondary" href="/user/houselist">See all homes</a>
+                                <a class="btn btn-secondary" href="/">← Main Page</a>
+                            </div>
         </main>
 </body>
 

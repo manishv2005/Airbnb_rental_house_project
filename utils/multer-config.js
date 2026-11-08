@@ -18,9 +18,6 @@ const filefilter = (req, file, cb) => {
     const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png'];
     const allowedExtensions = ['.jpg', '.jpeg', '.png'];
 
-    
-    // koi hack.js ko 'image/jpeg' label de ke bhej sakta tha
-    // Ab DONO check karte hain — MIME aur actual file extension
     const ext = path.extname(file.originalname).toLowerCase();
 
     if (allowedMimes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
@@ -36,7 +33,7 @@ exports.multerConfig = {
     storage: storage,
     fileFilter: filefilter,
     limits: {
-        fileSize: 1 * 1024 * 1024,   // 1MB per file — fileSize (capital S) ✅
+        fileSize: 5 * 1024 * 1024,   // 1MB per file — fileSize (capital S) ✅
         files: 5,                      // max 5 files per request
         fields: 10,                    // max 10 non-file fields
         fieldSize: 2 * 1024 * 1024    // ✅ FIX: 'fieldsize' → 'fieldSize' (capital S) — same typo as filesize

@@ -60,7 +60,7 @@
                 <% houselist.forEach(house=> { %>
                     <div class="house-card">
                         <div class="card-img-wrap">
-                            <img src="<%= house.image || 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&auto=format&fit=crop' %>"
+                            <img src="<%= house.cover_image ? '/' + house.cover_image : 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&auto=format&fit=crop' %>"
                                 alt="<%= house.name %>" class="card-img"
                                 onerror="this.src='https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&auto=format&fit=crop'">
                             <span class="card-badge">Featured</span>
@@ -68,18 +68,27 @@
                         <div class="card-body">
                             <div class="card-top">
                                 <h3 class="card-title">
-                                    <%= house.name %>
+                                    <%= house.name || 'Untitled Property' %>
                                 </h3>
-                                <span class="card-price">₹<%= Number(house.price).toLocaleString('en-IN') %>
-                                        <small>/night</small></span>
+                                <span class="card-price">
+                                    <% if (house.price) { %>
+                                        ₹<%= Number(house.price).toLocaleString('en-IN') %><small>/night</small>
+                                    <% } else { %>
+                                        <small>Price not set</small>
+                                    <% } %>
+                                </span>
                             </div>
                             <p class="card-desc">
-                                <%= house.description ? house.description.substring(0, 80) + (house.description.length>
+                                <%= house.description ? house.description.substring(0, 80) + (house.description.length >
                                     80 ? '…' : '') : 'A wonderful place to stay.' %>
                             </p>
                             <div class="card-meta">
-                                <span class="meta-item">👥 <%= house.number || '—' %> house number</span>
-                                <span class="card-rating">★ 4.8</span>
+                                <span class="meta-item">
+                                    📍 <%= [house.city, house.country].filter(Boolean).join(', ') || 'Location not set' %>
+                                </span>
+                                <span class="meta-item">
+                                    👥 <%= house.max_guests ? house.max_guests + ' guests' : 'Guests not set' %>
+                                </span>
                             </div>
                             <a href="/auth/user/login" class="btn-book">Book now →</a>
                         </div>

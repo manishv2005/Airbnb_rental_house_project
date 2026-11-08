@@ -24,6 +24,12 @@ module.exports = class Favourite {
         return db.execute('SELECT * FROM favourites WHERE HomeId = ? AND UserId = ?', [this.HomeId , this.UserId]);
     }
 
+
+
+    static delete_homes_in_fav (home_id,connection) {
+        return connection.execute('DELETE FROM favourites WHERE HomeId = ? ', [home_id]);
+    }
+
 }
 
 // Error Code: 3780. Referencing column 'HomeId' and referenced column 'id' in foreign key constraint 'fk_favourites_home' are incompatible.
